@@ -62,13 +62,9 @@ Shelf Image → [Stage 1: Detection] → Product Regions → [Stage 2: Classific
 ## Models
 
 **Included:**
+- `01_detection/sku110k_batch_3.pt` - YOLOv5 detector (18.5MB)
 - `02_classification/best_resnet18_grocery.pth` - ResNet-18 classifier (42.8MB)
 - `02_classification/class_names.json` - 81 class labels (required for Stage 3)
-
-**Not Included:**
-- `sku110k_batch_3.pt` - YOLOv5 detector (teammate's contribution)
-  - Stage 1 notebook shows training process
-  - Pre-cropped outputs provided for Stage 3 demo
 
 ## Repository Structure
 ```
@@ -78,7 +74,8 @@ retail-shelf-product-recognition/
 ├── LICENSE
 │
 ├── 01_detection/
-│   └── product_detection_YOLO.ipynb
+│   ├── product_detection_YOLO.ipynb
+│   └── sku110k_batch_3.pt
 │
 ├── 02_classification/
 │   ├── product_classification_ResNet18.ipynb
