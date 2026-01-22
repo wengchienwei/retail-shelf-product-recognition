@@ -1,14 +1,12 @@
-# Two-Stage Grocery Product Recognition
-
 MSc Data Sciences and Business Analytics - CentraleSupélec, Université Paris-Saclay
 
-**Team Members:** Chien-Wei Weng, Ke Chen, Yuhong Li, Yingzhou Fang
+**Team Members:** Chien-Wei Weng, Yuhong Li, Ke Chen, Yingzhou Fang
 
 ---
 
 ## Overview
 
-A modular pipeline combining YOLOv5 detection with ResNet-18 classification for automated grocery product recognition on retail shelves.
+Complete end-to-end pipeline for automated grocery product recognition combining YOLOv5 detection with ResNet-18 classification.
 ```
 Shelf Image → [Stage 1: Detection] → Product Regions → [Stage 2: Classification] → Product Labels
               YOLOv5s                                   ResNet-18
@@ -25,21 +23,38 @@ Shelf Image → [Stage 1: Detection] → Product Regions → [Stage 2: Classific
 
 ### Stage 1: Product Detection
 - **Model:** YOLOv5s (9.1M parameters)
-- **Dataset:** SKU-110K (11,762 images, 147 products/image avg)
+- **Dataset:** SKU-110K (11,762 shelf images)
 - **Task:** Single-class object detection
 - **Performance:** 88.9% mAP@0.5, 89.6% precision, 81.8% recall
 - **Output:** Cropped product regions
 
 ### Stage 2: Product Classification  
 - **Model:** ResNet-18 fine-tuned (11.2M parameters)
-- **Dataset:** Grocery Store (2,640 train / 2,485 test images, 81 categories)
+- **Dataset:** Grocery Store (2,640 train / 2,485 test, 81 categories)
 - **Task:** Fine-grained product classification
 - **Performance:** 78.31% accuracy, 77.75% macro F1
-- **Finding:** 7 vegetable classes show circular misclassification pattern
+- **Output:** Product category predictions
+
+### Stage 3: End-to-End Integration
+- **Input:** 7,990 crops from 50 shelf images
+- **Processing:** 165 images/second
+- **Finding:** 3.69% avg confidence (expected due to domain gap)
+- **Validation:** Pipeline functionality confirmed
+
+## Models
+
+**Included:**
+- `02_classification/best_resnet18_grocery.pth` - ResNet-18 classifier (42.8MB)
+- `02_classification/class_names.json` - 81 class labels (required for Stage 3)
+
+**Not Included:**
+- `sku110k_batch_3.pt` - YOLOv5 detector (teammate's contribution)
+  - Stage 1 notebook shows training process
+  - Pre-cropped outputs provided for Stage 3 demo
 
 ## Repository Structure
 ```
-grocery-product-recognition/
+retail-shelf-product-recognition/
 ├── README.md
 ├── requirements.txt
 │
@@ -47,69 +62,60 @@ grocery-product-recognition/
 │   └── product_detection_YOLO.ipynb
 │
 ├── 02_classification/
-│   └── product_classification_ResNet18.ipynb
+│   ├── product_classification_ResNet18.ipynb
+│   ├── best_resnet18_grocery.pth          
+│   └── class_names.json                          
+│
+├── 03_integration/
+│   └── end_to_end_demo.ipynb
 │
 ├── results/
 │   └── figures/
-│       ├── 01/                      # Detection visualizations
-│       └── 02/                      # Classification visualizations
+│       ├── 01/                                     # Detection visualizations
+│       ├── 02/                                     # Classification visualizations
+│       └── 03/                                     # Integration analysis
 │
 ├── sample_outputs/
-│   ├── 01_detection/                # Example detection outputs
-│   └── 02_classification/           # Example classification results
+│   ├── 01_detection/                               # Example detection outputs
+│   └── 02_classification/                          # Example classification results
+│   
 │
 └── docs/
     └── proposal.pdf
 ```
 
-## Installation
+## Quick Start
 ```bash
 git clone https://github.com/wengchienwei/retail-shelf-product-recognition.git
 cd retail-shelf-product-recognition
 pip install -r requirements.txt
 ```
 
-## Usage
+Run notebooks sequentially:
+1. `01_detection/product_detection_YOLO.ipynb`
+2. `02_classification/product_classification_ResNet18.ipynb`
+3. `03_integration/end_to_end_demo.ipynb`
 
-### Stage 1: Detection
-```python
-# Open in Google Colab
-01_detection/product_detection_YOLO.ipynb
-```
-
-### Stage 2: Classification
-```python
-# Open in Google Colab
-02_classification/product_classification_ResNet18.ipynb
-```
-
-## Results Summary
+## Key Results
 
 | Stage | Metric | Value |
 |-------|--------|-------|
 | Detection | mAP@0.5 | 88.9% |
-| Detection | Precision/Recall | 89.6% / 81.8% |
-| Classification | Test Accuracy | 78.31% |
-| Classification | Macro F1 | 77.75% |
+| Classification | Accuracy | ~78% |
+| Integration | Processing Speed | 165 img/s |
+| Integration | Avg Confidence | 3.69% (domain gap) |
 
 ## Datasets
 
-**SKU-110K** (Detection)
-- Source: [GitHub](https://github.com/eg4000/SKU110K_CVPR19)
-- 11,762 shelf images with dense product annotations
-- Single-class object detection task
-
-**Grocery Store** (Classification)
-- Source: [Klasson et al., 2019](https://doi.org/10.1109/WACV.2019.00058)
-- 5,125 images across 81 fine-grained product categories
-- Real-world retail shelf photography
+- **SKU-110K:** 11,762 dense shelf images for detection
+- **Grocery Store:** 2,640 train / 2,485 test images, 81 fine-grained categories
 
 ## References
 
-- Goldman, E., et al. (2019). Precise Detection in Densely Packed Scenes. CVPR.
-- Klasson, M., et al. (2019). A Hierarchical Grocery Store Image Dataset. WACV.
-- He, K., et al. (2016). Deep Residual Learning for Image Recognition. CVPR.
-- Ultralytics YOLOv5: [github.com/ultralytics/yolov5](https://github.com/ultralytics/yolov5)
+- SKU-110K: [Goldman et al., CVPR 2019](https://github.com/eg4000/SKU110K_CVPR19)
+- Grocery Store: [Klasson et al., WACV 2019](https://doi.org/10.1109/WACV.2019.00058)
+- YOLOv5: [Ultralytics](https://github.com/ultralytics/yolov5)
+- ResNet: [He et al., CVPR 2016](https://doi.org/10.1109/CVPR.2016.90)
 
 ---
 
