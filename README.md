@@ -96,7 +96,8 @@ retail-shelf-product-recognition/
 │   └── 02_classification/           # Example classification results        
 │
 └── docs/
-    └── proposal.pdf
+    ├── proposal.pdf
+    └── final_report.pdf
 ```
 
 ## Quick Start
@@ -118,6 +119,10 @@ pip install -r requirements.txt
 **Classification:** ResNet-18, Grocery Store dataset  
 **Visualization:** matplotlib, seaborn  
 **Experiment Tracking:** Weights & Biases
+
+## Documentation
+- [Project Proposal](docs/proposal.pdf) - Initial project design
+- [Final Report](docs/final_report.pdf) - Complete technical report (LNCS format)
 
 ## Datasets
 
